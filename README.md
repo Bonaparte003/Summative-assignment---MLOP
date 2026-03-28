@@ -43,8 +43,8 @@ You can **train offline** (notebook or `src/train.py`), **serve** predictions vi
 ### 1. Clone and virtual environment
 
 ```bash
-git clone <YOUR_GITHUB_REPO_URL>
-cd iDetect-Summative-introduction_to_machine_learning
+git clone [<YOUR_GITHUB_REPO_URL>](https://github.com/Bonaparte003/Summative-assignment---MLOP)
+cd [iDetect-Summative-introduction_to_machine_learning](https://github.com/Bonaparte003/Summative-assignment---MLOP)
 python3 -m venv .venv
 source .venv/bin/activate    # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
@@ -52,7 +52,7 @@ pip install -r requirements.txt
 
 ### 2. Dataset layout
 
-Create **`AffectNet/`** at the **repository root**:
+Ensure we have **`AffectNet` dataset from [kaggle](- **Source:** [AffectNet on Kaggle](https://www.kaggle.com/datasets/mstjebashazida/affectnet)) at the **root**:
 
 ```text
 AffectNet/
