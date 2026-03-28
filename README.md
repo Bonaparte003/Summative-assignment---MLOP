@@ -43,8 +43,8 @@ You can **train offline** (notebook or `src/train.py`), **serve** predictions vi
 ### 1. Clone and virtual environment
 
 ```bash
-git clone [<YOUR_GITHUB_REPO_URL>](https://github.com/Bonaparte003/Summative-assignment---MLOP)
-cd [iDetect-Summative-introduction_to_machine_learning](https://github.com/Bonaparte003/Summative-assignment---MLOP)
+git clone https://github.com/Bonaparte003/Summative-assignment---MLOP
+cd [iDetect-Summative-introduction_to_machine_learning]
 python3 -m venv .venv
 source .venv/bin/activate    # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
