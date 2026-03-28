@@ -166,13 +166,4 @@ Exact numbers depend on your data and run; open **`reports/metrics.json`** for t
 | `data/uploads/` | Retraining images (`0/` and `1/`) |
 | `data/idetect_retrain.sqlite3` | Created at runtime (gitignored) — upload audit trail |
 
----
-
-## License and dataset
-
-- **AffectNet:** use and cite according to the terms of the copy you obtained.
-- **Code:** see repository license if one is added.
-
----
-
 <p align="center"><sub>iDetect — MLOps summative</sub></p>
