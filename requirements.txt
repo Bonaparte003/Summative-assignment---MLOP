@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+streamlit
+requests
+tensorflow
+opencv-python
+scikit-learn
+matplotlib
+seaborn
+tqdm
+locust
+python-multipart
+watchdog
+
