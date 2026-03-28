@@ -1,0 +1,24 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - DATA_DIR=/app/AffectNet
+      - UPLOADS_DIR=/app/data/uploads
+      - DATABASE_PATH=/app/data/idetect_retrain.sqlite3
+      - OUTPUT_DIR=/app
+    volumes:
+      - ./models:/app/models
+      - ./data:/app/data
+
+  ui:
+    build: .
+    ports:
+      - "8501:8501"
+    environment:
+      - API_URL=http://api:8000
+      - DATA_DIR=/app/AffectNet
+    command: ["streamlit", "run", "ui/app.py", "--server.port", "8501", "--server.address", "0.0.0.0"]
+    depends_on:
+      - api
