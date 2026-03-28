@@ -1,0 +1,26 @@
+{
+  "notebook": "colab_efficientnet_intro_recipe",
+  "img_size": 224,
+  "unfreeze_last_n": 30,
+  "epochs_head": 8,
+  "epochs_finetune": 12,
+  "test_metrics": {
+    "accuracy": 0.9488636363636364,
+    "precision": 0.9540229885057471,
+    "recall": 0.9431818181818182,
+    "f1": 0.9485714285714286,
+    "roc_auc": 0.9868285123966942,
+    "confusion_matrix": [
+      [
+        84,
+        4
+      ],
+      [
+        5,
+        83
+      ]
+    ],
+    "classification_report": "              precision    recall  f1-score   support\n\n           0       0.94      0.95      0.95        88\n           1       0.95      0.94      0.95        88\n\n    accuracy                           0.95       176\n   macro avg       0.95      0.95      0.95       176\nweighted avg       0.95      0.95      0.95       176\n"
+  },
+  "model_path": "/content/drive/MyDrive/iDetect_outputs/models/idetect_classifier.keras"
+}
