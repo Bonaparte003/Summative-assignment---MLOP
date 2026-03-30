@@ -1,3 +1,5 @@
+name: idetect-summative-machine-learning-pipeline
+
 services:
   api:
     build: .
