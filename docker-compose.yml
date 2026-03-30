@@ -2,7 +2,11 @@ name: idetect-summative-machine-learning-pipeline
 
 services:
   api:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: api
+    image: avellin/machine_learning_pipeline:api
     ports:
       - "8000:8000"
     environment:
@@ -13,14 +17,32 @@ services:
     volumes:
       - ./models:/app/models
       - ./data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
 
   ui:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: ui
+    image: avellin/machine_learning_pipeline:ui
     ports:
       - "8501:8501"
     environment:
       - API_URL=http://api:8000
       - DATA_DIR=/app/AffectNet
-    command: ["streamlit", "run", "ui/app.py", "--server.port", "8501", "--server.address", "0.0.0.0"]
     depends_on:
-      - api
+      api:
+        condition: service_healthy
+    restart: unless-stopped
