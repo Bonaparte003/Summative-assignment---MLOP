@@ -48,7 +48,7 @@ services:
     restart: unless-stopped
 
   locust:
-    image: locustio/locust:2
+    image: locustio/locust:latest
     ports:
       - "8089:8089"
     environment:
