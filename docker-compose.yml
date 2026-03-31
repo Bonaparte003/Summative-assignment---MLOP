@@ -48,21 +48,14 @@ services:
     restart: unless-stopped
 
   locust:
-    image: locustio/locust:latest
+    build:
+      context: .
+      dockerfile: locust/Dockerfile
+    image: avellin/machine_learning_pipeline:locust
     ports:
       - "8089:8089"
     environment:
-      IMAGE_PATH: /data/AffectNet/happy
-    volumes:
-      - ./locust/locustfile.py:/mnt/locust/locustfile.py:ro
-      - ./AffectNet:/data/AffectNet:ro
-    command:
-      - -f
-      - /mnt/locust/locustfile.py
-      - --host
-      - http://api:8000
-      - --web-host
-      - 0.0.0.0
+      IMAGE_PATH: /fixtures/happy
     depends_on:
       api:
         condition: service_healthy
