@@ -31,6 +31,7 @@ The earlier repository is the **introduction module** work (notebook on GitHub).
 - **Class 0:** `anger`, `contempt`
 
 You can **train offline** (notebook or `src/train.py`), **serve** predictions via **FastAPI**, use a **Streamlit** UI, **upload** extra images for **retraining**, and **load-test** `/predict` with **Locust**.
+
 ---
 
 ## Setup (step by step)
