@@ -14,4 +14,4 @@ ENV IMAGE_PATH=/fixtures/happy
 
 EXPOSE 8089
 
-CMD ["-f", "/locust/locustfile.py", "--host", "http://127.0.0.1:8000", "--web-host", "0.0.0.0"]
+CMD ["-f", "/locust/locustfile.py", "--host", "http://api:8000", "--web-host", "0.0.0.0"]
