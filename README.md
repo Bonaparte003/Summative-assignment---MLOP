@@ -31,9 +31,6 @@ The earlier repository is the **introduction module** work (notebook on GitHub).
 - **Class 0:** `anger`, `contempt`
 
 You can **train offline** (notebook or `src/train.py`), **serve** predictions via **FastAPI**, use a **Streamlit** UI, **upload** extra images for **retraining**, and **load-test** `/predict` with **Locust**.
-
-**Continuity with the intro course:** the full comparison experiments (classical ML + deep learning) live in **`notebook/iDetect_Project_Summative_introduction_to_machine_learning-2.ipynb`** in this repo. The public [**introduction summative** repo](https://github.com/Bonaparte003/iDetect-Summative-introduction_to_machine_learning) is the earlier standalone submission. The **pipeline notebook** (`notebook/iDetect_Project_Summative_machine_learning_pipeline.ipynb`) follows the **EfficientNetB0 fine-tuning** setup chosen there; **`src/train.py`** uses the **same architecture and preprocessing**, with a **single** `model.fit` (configurable `unfreeze_last_n`, e.g. 30) rather than two separate Colab phases.
-
 ---
 
 ## Setup (step by step)
