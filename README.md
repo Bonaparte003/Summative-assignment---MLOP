@@ -12,8 +12,12 @@
 
 | | |
 |---|---|
-| **Video demo (submission)** | [YouTube — replace `VIDEO_ID` with your upload](https://www.youtube.com/watch?v=VIDEO_ID) |
+| **Repository (this project)** | [github.com/Bonaparte003/Summative-assignment---MLOP](https://github.com/Bonaparte003/Summative-assignment---MLOP) |
+| **Live app (hosted)** | [Streamlit UI — http://16.170.235.209](http://16.170.235.209) · FastAPI docs: [http://16.170.235.209:8000/docs](http://16.170.235.209:8000/docs) |
+| **Video demo** | [YouTube walkthrough](https://www.youtube.com/watch?v=Qit_-G2jZ_w) |
 | **Prior project (Introduction to ML summative)** | [github.com/Bonaparte003/iDetect-Summative-introduction_to_machine_learning](https://github.com/Bonaparte003/iDetect-Summative-introduction_to_machine_learning) |
+
+The hosted stack matches **Docker Compose** locally: UI on **8501** (often reverse-proxied to port **80**), API on **8000**. Open **8000** (and **8089** if you run Locust) in the instance **security group** if those URLs time out.
 
 The earlier repository is the **introduction module** work (notebook on GitHub). **This** repository adds the pipeline: training notebook under `notebook/`, `src/`, FastAPI, Streamlit, SQLite upload log, Docker, and Locust.
 
@@ -44,7 +48,7 @@ You can **train offline** (notebook or `src/train.py`), **serve** predictions vi
 
 ```bash
 git clone https://github.com/Bonaparte003/Summative-assignment---MLOP
-cd [iDetect-Summative-introduction_to_machine_learning]
+cd Summative-assignment---MLOP
 python3 -m venv .venv
 source .venv/bin/activate    # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
@@ -52,7 +56,7 @@ pip install -r requirements.txt
 
 ### 2. Dataset layout
 
-Ensure we have **`AffectNet` dataset from [kaggle](- **Source:** [AffectNet on Kaggle](https://www.kaggle.com/datasets/mstjebashazida/affectnet)) at the **root**:
+Ensure you have the **AffectNet** dataset ([Kaggle — AffectNet](https://www.kaggle.com/datasets/mstjebashazida/affectnet)) at the **repo root**:
 
 ```text
 AffectNet/
@@ -99,7 +103,7 @@ streamlit run ui/app.py --server.port 8501
 - Predict: `POST /predict` (multipart field **`image`**)
 - Retrain flow: `POST /upload` → `POST /retrain` → `GET /job/{job_id}`
 
-Set **`API_URL`** if Streamlit is not on the same machine as the API (default `http://localhost:8000`).
+Set **`API_URL`** if Streamlit is not on the same machine as the API (default `http://localhost:8000`). On the **hosted** deployment, the UI container uses `API_URL=http://api:8000` inside Compose; for a manual EC2 setup, set `API_URL` to your public API base (e.g. `http://16.170.235.209:8000`).
 
 ### 5. Docker Compose
 
