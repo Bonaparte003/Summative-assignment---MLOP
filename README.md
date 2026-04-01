@@ -13,7 +13,7 @@
 | | |
 |---|---|
 | **Repository (this project)** | [github.com/Bonaparte003/Summative-assignment---MLOP](https://github.com/Bonaparte003/Summative-assignment---MLOP) |
-| **Live app (hosted)** | [Streamlit UI — http://16.170.235.209](http://16.170.235.209) · FastAPI docs: [http://16.170.235.209:8000/docs](http://16.170.235.209:8000/docs) |
+| **Live app (hosted)** | [Streamlit UI — http://16.170.235.209](http://16.170.235.209)|
 | **Video demo** | [YouTube walkthrough](https://www.youtube.com/watch?v=Qit_-G2jZ_w) |
 | **Prior project (Introduction to ML summative)** | [github.com/Bonaparte003/iDetect-Summative-introduction_to_machine_learning](https://github.com/Bonaparte003/iDetect-Summative-introduction_to_machine_learning) |
 
