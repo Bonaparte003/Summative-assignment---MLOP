@@ -96,9 +96,9 @@ uvicorn api.main:app --host 0.0.0.0 --port 8000
 streamlit run ui/app.py --server.port 8501
 ```
 
-- API docs: `http://localhost:8000/docs`
 - Health: `GET http://localhost:8000/health`
 - Predict: `POST /predict` (multipart field **`image`**)
+- Bulk upload (retraining): **`GET /retrain/bulk-upload-info`** documents **`POST /upload`**; the POST route is **omitted from interactive `/docs`** so Swagger cannot trigger uploads (Streamlit and API clients still use `POST /upload` as before).
 - Retrain flow: `POST /upload` → `POST /retrain` → `GET /job/{job_id}`
 
 Set **`API_URL`** if Streamlit is not on the same machine as the API (default `http://localhost:8000`). On the **hosted** deployment, the UI container uses `API_URL=http://api:8000` inside Compose; for a manual EC2 setup, set `API_URL` to your public API base (e.g. `http://16.170.235.209:8000`).

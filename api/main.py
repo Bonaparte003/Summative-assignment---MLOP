@@ -93,7 +93,50 @@ def predict(
         return predictor.predict(image_bytes=content, threshold=threshold)
 
 
-@app.post("/upload")
+@app.get("/retrain/bulk-upload-info")
+def bulk_upload_info() -> dict:
+    """
+    Documents **POST /upload** (bulk image upload for retraining).
+
+    That endpoint is intentionally **omitted from `/docs`** so the interactive
+    Swagger UI cannot drive uploads; use this response, your API client, or the Streamlit UI.
+    """
+    return {
+        "method": "POST",
+        "path": "/upload",
+        "content_type": "multipart/form-data",
+        "fields": {
+            "label": {
+                "type": "integer",
+                "required": True,
+                "allowed_values": [0, 1],
+                "meaning": {
+                    "1": "approachable (happy/neutral-style class)",
+                    "0": "not approachable (anger/contempt-style class)",
+                },
+            },
+            "images": {
+                "type": "file[]",
+                "required": True,
+                "note": "One or more image parts; same field name repeated for each file.",
+            },
+        },
+        "success": {
+            "saved": "number of files written",
+            "label": "submitted label",
+            "uploads_dir": "directory under data/uploads/{label}/",
+            "sqlite_path": "path to upload audit DB",
+            "sqlite_row_ids": "new row ids",
+            "sqlite_summary": "totals from retrain DB",
+        },
+        "errors": [
+            "400 if label is not 0 or 1",
+            "400 if no files or none could be saved",
+        ],
+    }
+
+
+@app.post("/upload", include_in_schema=False)
 def upload_images(
     label: int = Form(..., description="Binary label: 1=approachable, 0=not_approachable"),
     images: list[UploadFile] = File(...),
