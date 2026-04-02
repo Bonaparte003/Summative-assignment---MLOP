@@ -17,7 +17,7 @@
 | **Video demo** | [YouTube walkthrough](https://www.youtube.com/watch?v=Qit_-G2jZ_w) |
 | **Prior project (Introduction to ML summative)** | [github.com/Bonaparte003/iDetect-Summative-introduction_to_machine_learning](https://github.com/Bonaparte003/iDetect-Summative-introduction_to_machine_learning) |
 
-The hosted stack matches **Docker Compose** locally: UI on **8501** (often reverse-proxied to port **80**), API on **8000**. Open **8000** (and **8089** if you run Locust) in the instance **security group** if those URLs time out.
+The hosted stack matches **Docker Compose** locally: UI on **8501**  reverse-proxied to port **80**, API on **8000**. Open **8000** (and **8089** if you run Locust) in the instance **security group** if those URLs time out.
 
 The earlier repository is the **introduction module** work (notebook on GitHub). **This** repository adds the pipeline: training notebook under `notebook/`, `src/`, FastAPI, Streamlit, SQLite upload log, Docker, and Locust.
 
@@ -180,7 +180,6 @@ Exact numbers depend on your data and run; open **`reports/metrics.json`** for t
 
 | Path | Purpose |
 |------|---------|
-| `notebook/iDetect_Project_Summative_introduction_to_machine_learning-2.ipynb` | Intro module: SVM + DL experiments + comparison |
 | `notebook/iDetect_Project_Summative_machine_learning_pipeline.ipynb` | Pipeline training, evaluation, export |
 | `src/preprocessing.py`, `model.py`, `prediction.py` | Data, graph, inference |
 | `src/train.py` | CLI training (used by API retrain) |
