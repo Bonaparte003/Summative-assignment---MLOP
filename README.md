@@ -34,55 +34,103 @@ You can **train offline** (notebook or `src/train.py`), **serve** predictions vi
 
 ---
 
-## Setup (step by step)
+## Walkthrough (Docker Compose)
+
+This is the recommended path: train once (notebook or CLI), place the weights on disk, then bring up **api**, **ui**, and optionally **locust** with Compose.
 
 ### Prerequisites
 
-- **Python 3.10+** (3.11 matches the `Dockerfile`)
-- **Git**, **pip**
-- **AffectNet** (or same layout) on disk — not bundled here by default
+- **Docker** with Compose v2 (`docker compose`)
+- **Git**
+- **AffectNet** (or the same folder layout) on your machine when you train — [Kaggle — AffectNet](https://www.kaggle.com/datasets/mstjebashazida/affectnet)
 
-### 1. Clone and virtual environment
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/Bonaparte003/Summative-assignment---MLOP
 cd Summative-assignment---MLOP
-python3 -m venv .venv
-source .venv/bin/activate    # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
 ```
 
-### 2. Dataset layout
+### 2. Get your first model (pipeline notebook)
 
-Ensure you have the **AffectNet** dataset ([Kaggle — AffectNet](https://www.kaggle.com/datasets/mstjebashazida/affectnet)) at the **repo root**:
+The API loads **`models/idetect_classifier.keras`** from the repo (mounted into the container). Produce that file once using the pipeline notebook:
 
-```text
-AffectNet/
-  happy/
-  neutral/
-  anger/
-  contempt/
-```
+1. **Environment** — Create a virtualenv (or use Jupyter/Colab) and install dependencies:  
+   `python3 -m venv .venv && source .venv/bin/activate` then `pip install -r requirements.txt` (or install the same packages in Colab).
 
-Training code **balances** classes and emotion pairs (see `src/preprocessing.py`). Optional cap: `--limit_per_emotion` (CLI) or `LIMIT_PER_EMOTION` in the pipeline notebook.
+2. **Dataset layout** — Point training at a directory that contains **`happy/`**, **`neutral/`**, **`anger/`**, and **`contempt/`** (each folder holds images). Putting **AffectNet** at the **repo root** matches the defaults in the notebook.
 
-### 3. Train and produce artifacts
+   ```text
+   AffectNet/
+     happy/
+     neutral/
+     anger/
+     contempt/
+   ```
+
+3. **Open** **`notebook/iDetect_Project_Summative_machine_learning_pipeline.ipynb`**.
+
+4. **Set paths** in the configuration cells:
+   - **`DATA_DIR`** — absolute path to the folder above (e.g. `.../Summative-assignment---MLOP/AffectNet`).
+   - **`OUTPUT_DIR`** — where artifacts should be written (any writable folder, e.g. `.../iDetect_outputs`).
+
+5. **Run all cells** through training and export. The notebook writes:
+   - **`{OUTPUT_DIR}/models/idetect_classifier.keras`**
+   - **`{OUTPUT_DIR}/reports/metrics.json`** (and related report files under `reports/`).
+
+6. **Install the model into this repo for Docker** — Copy the saved file into the mounted model directory the stack expects:
+
+   ```bash
+   mkdir -p models reports
+   cp /path/to/your/OUTPUT_DIR/models/idetect_classifier.keras models/
+   cp /path/to/your/OUTPUT_DIR/reports/metrics.json reports/    # optional but useful for health/metadata
+   ```
+
+   **`src.train`** (CLI) also writes **`reports/model_meta.json`**; copy that into **`reports/`** if present so **`GET /health`** can show richer metadata. The pipeline notebook’s export section focuses on **`metrics.json`** and **`idetect_classifier.keras`**.
+
+**CLI alternative (same artifacts):** from the repo root, with venv active:
 
 ```bash
 python -m src.train --data_dir "AffectNet" --output_dir "."
 ```
 
-Or open **`notebook/iDetect_Project_Summative_machine_learning_pipeline.ipynb`**, set `DATA_DIR` / `OUTPUT_DIR`, run all cells, then copy **`idetect_classifier.keras`** into **`models/`** if you saved it elsewhere.
+That writes **`models/idetect_classifier.keras`**, **`reports/metrics.json`**, and **`reports/model_meta.json`** directly under the repo.
 
-**Expected outputs:**
+### 3. Run the stack
 
-| Output | Location |
-|--------|----------|
-| Saved model | `models/idetect_classifier.keras` |
-| Metrics + run metadata | `reports/metrics.json` |
-| Model pointer for API | `reports/model_meta.json` |
+```bash
+docker compose up --build
+```
 
-### 4. Run API + UI (local)
+| Service | URL / port | Notes |
+|--------|------------|--------|
+| **API** | [http://localhost:8000/docs](http://localhost:8000/docs) | OpenAPI UI; health at **`GET /health`** |
+| **UI** | [http://localhost:8501](http://localhost:8501) | Streamlit; uses **`API_URL=http://api:8000`** inside Compose |
+| **Locust** | [http://localhost:8089](http://localhost:8089) | Preconfigured with **`--host http://api:8000`**; needs **`AffectNet/happy`** at **image build** time (see **`locust/Dockerfile`**) |
+
+Compose **bind-mounts** **`./models`** and **`./data`** into the API container. Without **`models/idetect_classifier.keras`**, the API starts but **`/health`** reports **`model_missing`** and **`/predict`** returns **503** until the file is present.
+
+**Retraining inside Docker** expects training data at **`/app/AffectNet`** in the API container. If `AffectNet` is not baked into the image (e.g. it is gitignored), add a volume when you need retrain, for example extend **`docker-compose.yml`** with  
+`- ./AffectNet:/app/AffectNet` under **`api.volumes`**, or run a one-off **`docker run`** with that mount.
+
+**Endpoints (summary):**
+
+- Predict: **`POST /predict`** (multipart field **`image`**)
+- Bulk upload (retraining): **`GET /retrain/bulk-upload-info`** documents **`POST /upload`**; the POST route is **omitted from interactive `/docs`**
+- Retrain flow: **`POST /upload`** → **`POST /retrain`** → **`GET /job/{job_id}`**
+
+### 4. Locust without the Compose service
+
+If the API runs on the host (**`localhost:8000`**) instead of Compose:
+
+```bash
+export IMAGE_PATH=AffectNet/happy
+locust -f locust/locustfile.py --host http://localhost:8000
+```
+
+Open **http://localhost:8089**, run a test, then export or screenshot stats for your write-up.
+
+### 5. Alternative: run API + UI without Docker
 
 **Terminal 1 — API**
 
@@ -96,23 +144,9 @@ uvicorn api.main:app --host 0.0.0.0 --port 8000
 streamlit run ui/app.py --server.port 8501
 ```
 
-- Health: `GET http://localhost:8000/health`
-- Predict: `POST /predict` (multipart field **`image`**)
-- Bulk upload (retraining): **`GET /retrain/bulk-upload-info`** documents **`POST /upload`**; the POST route is **omitted from interactive `/docs`** so Swagger cannot trigger uploads (Streamlit and API clients still use `POST /upload` as before).
-- Retrain flow: `POST /upload` → `POST /retrain` → `GET /job/{job_id}`
+Set **`API_URL`** if Streamlit is not on the same machine as the API (default **`http://localhost:8000`**). On **hosted** EC2 with Compose, the UI uses **`API_URL=http://api:8000`**; for a manual host-only setup use your public API base (e.g. **`http://16.170.235.209:8000`**).
 
-Set **`API_URL`** if Streamlit is not on the same machine as the API (default `http://localhost:8000`). On the **hosted** deployment, the UI container uses `API_URL=http://api:8000` inside Compose; for a manual EC2 setup, set `API_URL` to your public API base (e.g. `http://16.170.235.209:8000`).
-
-### 5. Docker Compose
-
-```bash
-docker compose up --build
-```
-
-- API: **8000**, UI: **8501**
-- Mount **`AffectNet`** and persist **`./data`** and **`./models`** as in `docker-compose.yml` / `Dockerfile` comments.
-
-**API-only container example:**
+### 6. API-only container (no Compose)
 
 ```bash
 docker build -t idetect-api .
@@ -123,17 +157,6 @@ docker run -p 8000:8000 \
   -v "$PWD/data:/app/data" \
   idetect-api
 ```
-
-### 6. Locust (load test)
-
-With the API running and a folder of images available to the Locust process:
-
-```bash
-export IMAGE_PATH=AffectNet/happy
-locust -f locust/locustfile.py --host http://localhost:8000
-```
-
-Open the Locust web UI (default **http://localhost:8089**), run a test, then **save or screenshot** latency stats for your coursework write-up.
 
 ---
 
